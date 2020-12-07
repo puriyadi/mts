@@ -69,9 +69,8 @@ class _MainDrawerState extends State<MainDrawer> {
 
   Future _cekLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getBool('isLogin') == false) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => new LoginScreen()));
+    if (pref.getBool('isLogin').toString() == "false" || pref.getBool('isLogin').toString() == "null") {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => new LoginScreen()));
     }
   }
 
