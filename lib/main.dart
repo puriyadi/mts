@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mts/constant.dart';
 import 'package:mts/home_screen.dart';
+import 'package:mts/list_order.dart';
+import 'package:mts/receive_order.dart';
 import 'package:progress_dialog/progress_dialog.dart'; 
 import 'package:http/http.dart' as http; 
 import 'package:flutter/cupertino.dart';
@@ -17,7 +19,12 @@ void main() {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: LoginScreen(),
+      routes: {
+        '/': (_) => LoginScreen(),
+        ReceiveOrder.routeName: (_) => ReceiveOrder(),
+        ListOrder.routeName: (_) => ListOrder(),
+      },
+      //home: LoginScreen(),
     )
   );
 }
