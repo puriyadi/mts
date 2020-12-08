@@ -22,16 +22,20 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
   }
 
   fetchUser() async {
-    var url = ip+'/receiveorder';
+    var url = ip+'/receivejob';
     var response = await http.get(url);
 
     if(response.statusCode == 200) {
       var items = jsonDecode(response.body);
-      print(items);
+      print('response body '+items);
+      setState(() {
+        users = items;
+      });
     } else {
-      var items = jsonDecode(response.body);
-      print(items);
-    } 
+      setState(() {
+        users = [];
+      });
+    }
 
   }
 
@@ -51,27 +55,32 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
        "1","2"
      ];
      print(items);
-     return ListView.builder(itemBuilder: (context, index) {
-       return getCard();
-     });
-   }
+     return ListView.builder(
+      itemCount: users.length,
+      itemBuilder: (context, index) {
+        return getCard(index);
+      }
+    );
+  }
 
-   Widget getCard() {
-     return Padding(
-       padding: const EdgeInsets.all(8.0),
-       child: Card(
-         child: ListTile(
-           title: Row(
-             children: <Widget>[
-               Column(children: <Widget>[
-                 Text("AAA"),
-                 Text("BBBB"),
-                 Text("CCCC"),
-               ],)
-             ],
-           ),
-         ),
-       ),
-     );
-   }
+  Widget getCard(index) {
+    var fullName = index;
+    print(fullName);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: ListTile(
+          title: Row(
+            children: <Widget>[
+              Column(children: <Widget>[
+                Text("AAA"),
+                Text("BBBB"),
+                Text("CCCC"),
+              ],)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

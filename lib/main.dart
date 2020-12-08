@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future _cekLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if(pref.getBool('isLogin')) {
+    if(pref.getBool('isLogin').toString() == "true") {
       Navigator.of(context).push(
         CupertinoPageRoute(
           builder: (
