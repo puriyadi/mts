@@ -143,8 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
     
     
     
-    if(response.statusCode == 200) {
-      print("Login OK");
+    if(response.statusCode == 200) { 
       Map<String, dynamic> data = jsonDecode(response.body);
 
       //await FlutterSession().set('username', txtUsername.text);
