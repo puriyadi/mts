@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mts/constant.dart';
 import 'package:mts/main_drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReceiveOrder extends StatefulWidget {
   static const routeName = '/receive_order';
@@ -20,12 +22,15 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
     super.initState();
     this.fetchUser();
   }
-
+  
   fetchUser() async {
-    var url = ip+'/receivejob';
-    var response = await http.get(url);
-
-    if(response.statusCode == 200) {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var response = await http.get(url, headers: {
+      'Accept': 'application/json'
+    });
+    
+    if(response.statusCode == 200) 
+    {
       var items = jsonDecode(response.body);
       print('response body '+items);
       setState(() {
@@ -37,7 +42,31 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
       });
     }
 
+    
   }
+  
+  /*
+  Future fetchUser() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final queryParameters = {
+      'empl_id': pref.getString('userName')
+    };
+
+    final uri = Uri.http(ip, '/receivejob', queryParameters);
+    final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+    final response = await http.get(uri, headers: headers);
+    /*
+    final response = await http.get(ip + '/userprofile',
+      headers: {'Authorization': 'bearer ' + pref.getString('token')});
+    */
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      print(data);
+      print('dataa' );
+    } else {
+    }
+  }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +93,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
   }
 
   Widget getCard(index) {
-    var fullName = index;
+    var fullName = index['data']['sched_id'];
     print(fullName);
     return Padding(
       padding: const EdgeInsets.all(8.0),

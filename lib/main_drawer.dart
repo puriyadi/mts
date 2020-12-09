@@ -60,6 +60,9 @@ class _MainDrawerState extends State<MainDrawer> {
           vRole = data['data']['user']['role'];
         });
       } else {
+        pref.setBool('isLogin', false);
+        pref.setString('userName', '');
+        pref.setString('token', '');
         _alertDialog('Token Expired, Silahkan Login Ulang');
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => new LoginScreen()));
