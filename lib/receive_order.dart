@@ -1,5 +1,4 @@
-import 'dart:convert'; 
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mts/constant.dart';
 import 'package:mts/main_drawer.dart';
@@ -15,10 +14,9 @@ class ReceiveOrder extends StatefulWidget {
 class _ReceiveOrderState extends State<ReceiveOrder> {
   List users = [];
   bool isLoading = false;
-  
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     this.fetchUser();
   }
@@ -47,24 +45,23 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
     }   
   }
   */
-  
+
   fetchUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     final String vUsername = pref.getString('userName');
 
-    var response = await http.get(ip+'/receivejob?empl_id='+vUsername);     
-    if(response.statusCode == 200) 
-    {
+    var response = await http.get(ip + '/receivejob?empl_id=' + vUsername);
+    if (response.statusCode == 200) {
       var items = jsonDecode(response.body)['data'];
       print(items);
       setState(() {
         users = items;
-      }); 
+      });
     } else {
       setState(() {
         users = [];
       });
-    }   
+    }
   }
 
   /*
@@ -99,17 +96,16 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
       drawer: MainDrawer(),
       body: getBody(),
     );
-   }
+  }
 
-   Widget getBody() {
-     //List items = ["1","2"];
+  Widget getBody() {
+    //List items = ["1","2"];
 
-     return ListView.builder(
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        return getCard(users[index]);
-      }
-    );
+    return ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          return getCard(users[index]);
+        });
   }
 
   Widget getCard(index) {
@@ -122,21 +118,21 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
     var vCustPhone = index['cust_phone1'].toString();
     var vCustHandphone = index['cust_handphone1'].toString();
     var vCustContact = index['cust_pic'].toString();
-    
+
     var vPickupName = index['pickup_name'].toString();
     var vPickupContact = index['pickup_contact'].toString();
     var vPickupAddress = index['pickup_address'].toString();
     var vDestName = index['dest_name'].toString();
     var vDestContact = index['dest_contact'].toString();
     var vDestAddress = index['dest_address'].toString();
-     
+
     var vContId = index['cont_id'].toString();
     var vContNo = index['cont_no'].toString();
     var vPadLock = index['padlock'].toString();
     var vSealNo = index['seal_no'].toString();
     var vDriverName = index['drv_name'].toString();
     var vPlatNo = index['vhc_plat_no'].toString();
-    
+
     //print(vSchedid);
     return Padding(
       padding: const EdgeInsets.all(4.0),
@@ -144,8 +140,8 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
         child: Column(
           children: <Widget>[
             ListTile(
-              title: Text('Schedule : '+vSchedid),
-              subtitle: Text('SI No. '+vSIID+' - '+vBussUnit),
+              title: Text('Schedule : ' + vSchedid),
+              subtitle: Text('SI No. ' + vSIID + ' - ' + vBussUnit),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
@@ -154,106 +150,159 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                 children: <Widget>[
                   Row(
                     children: [
-                      Text("DEPO: "+vDepo, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                      Text(
+                        "DEPO: " + vDepo,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("CUSTOMER: "+vCustName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),),
+                      Text(
+                        "CUSTOMER: " + vCustName,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("ADDRESS: "+vCustAddress, style: TextStyle(fontSize: 14),),
+                      Text(
+                        "ADDRESS: " + vCustAddress,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("TELP: "+ vCustPhone, style: TextStyle(fontSize: 14),),
+                      Text(
+                        "TELP: " + vCustPhone,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("HANDPHONE: "+ vCustHandphone, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),),
+                      Text(
+                        "HANDPHONE: " + vCustHandphone,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("KONTAK: "+ vCustContact, style: TextStyle(fontSize: 14),),
-                    ],
-                  ),
-                  
-                  Row(
-                    children: [
-                      Text("------------------------------------------------------------------"),
+                      Text(
+                        "KONTAK: " + vCustContact,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("MUAT: "+ vPickupName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                      Text(
+                          "------------------------------------------------------------------"),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("KONTAK: "+ vPickupContact, style: TextStyle(fontSize: 14),),
+                      Text(
+                        "MUAT: " + vPickupName,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "KONTAK: " + vPickupContact,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
-                        child: Text("ADDRESS: "+ vPickupAddress, style: TextStyle(fontSize: 14),
+                        child: Text(
+                          "ADDRESS: " + vPickupAddress,
+                          style: TextStyle(fontSize: 14),
                         ),
                       )
                     ],
                   ),
-                 
                   Row(
                     children: [
-                      Text("------------------------------------------------------------------"),
+                      Text(
+                          "------------------------------------------------------------------"),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("BONGKAR: "+ vDestName, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                      Text(
+                        "BONGKAR: " + vDestName,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("KONTAK: "+ vDestContact, style: TextStyle(fontSize: 14),),
+                      Text(
+                        "KONTAK: " + vDestContact,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
                       Expanded(
-                        child: Text("ADDRESS: "+ vDestAddress, style: TextStyle(fontSize: 14),
+                        child: Text(
+                          "ADDRESS: " + vDestAddress,
+                          style: TextStyle(fontSize: 14),
                         ),
                       )
                     ],
                   ),
-            
                   Row(
                     children: [
-                      Text("------------------------------------------------------------------"),
+                      Text(
+                          "------------------------------------------------------------------"),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("CONTAINER: "+ vContId + ", NO CONT: "+vContNo, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                      Text(
+                        "CONTAINER: " + vContId + ", NO CONT: " + vContNo,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("GEMBOK: "+ vPadLock+', SEAL NO: '+vSealNo, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                      Text(
+                        "GEMBOK: " + vPadLock + ', SEAL NO: ' + vSealNo,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("SOPIR: "+ vDriverName, style: TextStyle(fontSize: 14),),
+                      Text(
+                        "SOPIR: " + vDriverName,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
                     children: [
-                      Text("MOBIL: "+ vPlatNo, style: TextStyle(fontSize: 14),),
+                      Text(
+                        "MOBIL: " + vPlatNo,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ],
                   ),
                   Row(
@@ -261,16 +310,16 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                       ButtonTheme(
                         minWidth: 20,
                         child: RaisedButton(
-                          onPressed: () {}, 
+                          onPressed: () {},
                           child: Text('TERIMA ORDER'),
                         ),
                       ),
-                      SizedBox(width:5),
+                      SizedBox(width: 5),
                       ButtonTheme(
                         minWidth: 20,
                         child: RaisedButton(
                           color: Colors.red,
-                          onPressed: () {}, 
+                          onPressed: () {},
                           child: Text('TOLAK ORDER'),
                         ),
                       ),

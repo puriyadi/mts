@@ -4,29 +4,28 @@ import 'package:mts/constant.dart';
 import 'package:mts/home_screen.dart';
 import 'package:mts/list_order.dart';
 import 'package:mts/receive_order.dart';
-import 'package:progress_dialog/progress_dialog.dart'; 
-import 'package:http/http.dart' as http; 
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //void main() => runApp(MyApp());
+String drv_id = '';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   //dynamic token = FlutterSession().get('token');
-  runApp(
-    MaterialApp(
-      title: 'MTS',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      routes: {
-        '/': (_) => LoginScreen(),
-        ReceiveOrder.routeName: (_) => ReceiveOrder(),
-        ListOrder.routeName: (_) => ListOrder(),
-      },
-      //home: LoginScreen(),
-    )
-  );
+  runApp(MaterialApp(
+    title: 'MTS',
+    theme: ThemeData(
+      primarySwatch: Colors.green,
+    ),
+    routes: {
+      '/': (_) => LoginScreen(),
+      ReceiveOrder.routeName: (_) => ReceiveOrder(),
+      ListOrder.routeName: (_) => ListOrder(),
+    },
+    //home: LoginScreen(),
+  ));
 }
 
 class LoginScreen extends StatefulWidget {
@@ -37,31 +36,25 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController txtUsername = new TextEditingController();
   TextEditingController txtPassword = new TextEditingController();
-  
+
   void _alertDialog(String str) {
-    if(str.isEmpty) return;
+    if (str.isEmpty) return;
     AlertDialog alertDialog = new AlertDialog(
       content: new Text(
-        str, 
-        style: new TextStyle(
-          fontSize: 20.0
-        ),
+        str,
+        style: new TextStyle(fontSize: 20.0),
       ),
       actions: <Widget>[
         new RaisedButton(
-          color: Colors.blue,
-          child: new Text("OK"),
-          onPressed: () {
-            Navigator.pop(context);
-          }
-        )
+            color: Colors.blue,
+            child: new Text("OK"),
+            onPressed: () {
+              Navigator.pop(context);
+            })
       ],
     );
 
-    showDialog(
-      context: context,
-      child: alertDialog
-    );
+    showDialog(context: context, child: alertDialog);
   }
 
   @override
@@ -72,26 +65,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future _cekLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if(pref.getBool('isLogin').toString() == "true") {
+    if (pref.getBool('isLogin').toString() == "true") {
       Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (
-            BuildContext context
-          ) => HomeScreen()
-        )
-      );
-    } 
+          CupertinoPageRoute(builder: (BuildContext context) => HomeScreen()));
+    }
   }
-  
+
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title : Text("Login Trucking System"),
+        title: Text("Login Trucking System"),
       ),
       body: Column(
-        mainAxisAlignment : MainAxisAlignment.center, 
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(20),
@@ -111,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: RaisedButton(
                     onPressed: () {
                       this._doLogin();
-                    }, 
+                    },
                     child: Text('Login'),
                   ),
                 )
@@ -125,59 +113,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future _doLogin() async {
     ProgressDialog pr;
-    if(txtUsername.text.isEmpty || txtPassword.text.isEmpty) {
+    if (txtUsername.text.isEmpty || txtPassword.text.isEmpty) {
       _alertDialog('Username / Password Harus Diisi');
       return;
-    } 
+    }
 
     pr = new ProgressDialog(context);
     pr.style(message: 'Loading...');
     pr.show();
-    
-    final response = await http.post(ip+'/login', body: {
-      'username':  txtUsername.text,
-      'password': txtPassword.text
-    }, headers: {
-      'Accept': 'application/json'
-    });
-    
-    
-    
-    if(response.statusCode == 200) { 
+
+    final response = await http.post(ip + '/login',
+        body: {'username': txtUsername.text, 'password': txtPassword.text},
+        headers: {'Accept': 'application/json'});
+
+    if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
 
       //await FlutterSession().set('username', txtUsername.text);
       //await FlutterSession().set('token', data['data']['token']);
-      SharedPreferences pref =  await SharedPreferences.getInstance();
+      SharedPreferences pref = await SharedPreferences.getInstance();
       pref.setBool('isLogin', true);
       pref.setString('userName', txtUsername.text);
       pref.setString('token', data['data']['token']);
-
+      drv_id = data['user'][0]['drv_id'];
       Future.delayed(Duration(seconds: 3)).then((value) {
-        pr.hide().whenComplete(() {    
-          Navigator.of(context).push(
-          CupertinoPageRoute(
-            builder: (
-              BuildContext context
-            ) => HomeScreen()
-          )
-          );
+        pr.hide().whenComplete(() {
+          Navigator.of(context).push(CupertinoPageRoute(
+              builder: (BuildContext context) => HomeScreen()));
         });
       });
     } else {
-      SharedPreferences pref =  await SharedPreferences.getInstance();
+      SharedPreferences pref = await SharedPreferences.getInstance();
       pref.setBool('isLogin', false);
       pref.setString('username', '');
-      pref.setString('token','');
+      pref.setString('token', '');
 
       _alertDialog('Login Failed');
       Future.delayed(Duration(seconds: 3)).then((value) {
-      pr.hide().whenComplete(() {
-        Navigator.of(context);
+        pr.hide().whenComplete(() {
+          Navigator.of(context);
+        });
       });
-    });
-    }    
-  }  
+    }
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -188,7 +166,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-    );
+    return Scaffold();
   }
 }
