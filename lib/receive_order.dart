@@ -46,7 +46,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
   }
   */
 
-  fetchUser() async {
+  void fetchUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     final String vUsername = pref.getString('userName');
 
@@ -62,6 +62,23 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
         users = [];
       });
     }
+  }
+
+  void _btnreceivejob (String vSchedId, int vLine, String vSIID) async {
+    String vUsername = '';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    vUsername = pref.getString('userName');
+    var response = await http.post(ip + '/btnreceivejob', body: {
+      'sched_id': vSchedId,
+      'line': vLine,
+      'si_id': vSIID,
+      'username': vUsername,
+    });
+
+    if (response.statusCode == 200) {
+      var items = jsonDecode(response.body);
+      print(items);
+    }  
   }
 
   /*
@@ -109,7 +126,10 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
   }
 
   Widget getCard(index) {
+    int vLine = 0;
+
     var vSchedid = index['sched_id'].toString();
+    vLine = index['line'];
     var vSIID = index['si_id'].toString();
     var vBussUnit = index['buss_unit'].toString();
     var vDepo = index['depo'].toString();
@@ -140,7 +160,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
         child: Column(
           children: <Widget>[
             ListTile(
-              title: Text('Schedule : ' + vSchedid),
+              title: Text('Schedule : ' + vSchedid ),
               subtitle: Text('SI No. ' + vSIID + ' - ' + vBussUnit),
             ),
             Padding(
@@ -310,7 +330,9 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                       ButtonTheme(
                         minWidth: 20,
                         child: RaisedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            this._btnreceivejob(vSchedid, vLine, vSIID);
+                          },
                           child: Text('TERIMA ORDER'),
                         ),
                       ),
@@ -319,7 +341,9 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                         minWidth: 20,
                         child: RaisedButton(
                           color: Colors.red,
-                          onPressed: () {},
+                          onPressed: () {
+                            
+                          },
                           child: Text('TOLAK ORDER'),
                         ),
                       ),
@@ -333,4 +357,6 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
       ),
     );
   }
+
+ 
 }

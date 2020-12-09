@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
 import 'dart:ui' as ui;
-
 import 'home_screen.dart';
+import 'package:mts/constant.dart';
 
 class ListOrder extends StatefulWidget {
   ListOrder({Key key}) : super(key: key);
@@ -26,6 +26,7 @@ int index = 0;
 class _PayrollScreenState extends State<ListOrder> {
   final double _borderRadius = 24;
   List<dynamic> list = new List();
+  
   ScrollController _controller =
       new ScrollController(initialScrollOffset: 0.0, keepScrollOffset: true);
   _notif1(String dekripsi, String gambar, String keluar, Color warna) {
@@ -115,9 +116,7 @@ class _PayrollScreenState extends State<ListOrder> {
     });
     try {
       var datahistory;
-      var url = "http://10.0.2.2:8000/api/listorder?drv_id=" +
-          drv_id +
-          "&index=" +
+      var url = ip + "/listorder?drv_id=" +drv_id +"&index=" +
           index.toString();
       final response = await http.get(url,
           headers: {HttpHeaders.authorizationHeader: "bearer $token"});

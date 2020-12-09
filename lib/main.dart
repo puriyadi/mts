@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //void main() => runApp(MyApp());
 String drv_id = '';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   //dynamic token = FlutterSession().get('token');
@@ -36,6 +37,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController txtUsername = new TextEditingController();
   TextEditingController txtPassword = new TextEditingController();
+  
 
   void _alertDialog(String str) {
     if (str.isEmpty) return;
@@ -112,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future _doLogin() async {
+    
     ProgressDialog pr;
     if (txtUsername.text.isEmpty || txtPassword.text.isEmpty) {
       _alertDialog('Username / Password Harus Diisi');
