@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mts/constant.dart';
 import 'package:mts/list_order.dart';
-import 'package:mts/main.dart';
+import 'package:mts/loginscreen.dart';
 import 'package:mts/receive_order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -42,8 +42,11 @@ class _MainDrawerState extends State<MainDrawer> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setBool('isLogin', false);
     pref.setString('userName', '');
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => new LoginScreen()));
+    Navigator.of(context).push(
+      new MaterialPageRoute(
+        builder: (BuildContext context) => new LoginScreen(),
+      ),
+    );
   }
 
   Future _cekUser() async {
@@ -64,16 +67,24 @@ class _MainDrawerState extends State<MainDrawer> {
         pref.setString('userName', '');
         pref.setString('token', '');
         _alertDialog('Token Expired, Silahkan Login Ulang');
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => new LoginScreen()));
+        Navigator.of(context).push(
+          new MaterialPageRoute(
+            builder: (BuildContext context) => new LoginScreen(),
+          ),
+        );
       }
     }
   }
 
   Future _cekLogin() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    if (pref.getBool('isLogin').toString() == "false" || pref.getBool('isLogin').toString() == "null") {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => new LoginScreen()));
+    if (pref.getBool('isLogin').toString() == "false" ||
+        pref.getBool('isLogin').toString() == "null") {
+      Navigator.of(context).push(
+        new MaterialPageRoute(
+          builder: (BuildContext context) => new LoginScreen(),
+        ),
+      );
     }
   }
 
@@ -109,18 +120,20 @@ class _MainDrawerState extends State<MainDrawer> {
           new ListTile(
             title: new Text("Receive Order"),
             trailing: new Icon(Icons.mail),
-            onTap: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(ReceiveOrder.routeName);
-            }
+            onTap: () => Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (BuildContext context) => new ReceiveOrder(),
+              ),
+            ),
           ),
           new ListTile(
             title: new Text("List Order"),
             trailing: new Icon(Icons.list),
-            onTap: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(ListOrder.routeName);
-            }
+            onTap: () => Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (BuildContext context) => new ListOrder(),
+              ),
+            ),
           ),
           new ListTile(
             title: new Text("Logout"),
