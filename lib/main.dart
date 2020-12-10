@@ -10,7 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //void main() => runApp(MyApp());
-String drv_id = '';
+String drvId = '';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +37,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController txtUsername = new TextEditingController();
   TextEditingController txtPassword = new TextEditingController();
-  
 
   void _alertDialog(String str) {
     if (str.isEmpty) return;
@@ -114,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future _doLogin() async {
-    
     ProgressDialog pr;
     if (txtUsername.text.isEmpty || txtPassword.text.isEmpty) {
       _alertDialog('Username / Password Harus Diisi');
@@ -138,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
       pref.setBool('isLogin', true);
       pref.setString('userName', txtUsername.text);
       pref.setString('token', data['data']['token']);
-      drv_id = data['user'][0]['drv_id'];
+      drvId = data['user'][0]['drv_id'];
       Future.delayed(Duration(seconds: 3)).then((value) {
         pr.hide().whenComplete(() {
           Navigator.of(context).push(CupertinoPageRoute(

@@ -26,7 +26,7 @@ int index = 0;
 class _PayrollScreenState extends State<ListOrder> {
   final double _borderRadius = 24;
   List<dynamic> list = new List();
-  
+
   ScrollController _controller =
       new ScrollController(initialScrollOffset: 0.0, keepScrollOffset: true);
   _notif1(String dekripsi, String gambar, String keluar, Color warna) {
@@ -116,8 +116,8 @@ class _PayrollScreenState extends State<ListOrder> {
     });
     try {
       var datahistory;
-      var url = ip + "/listorder?drv_id=" +drv_id +"&index=" +
-          index.toString();
+      var url =
+          ip + "/listorder?drv_id=" + drvId + "&index=" + index.toString();
       final response = await http.get(url,
           headers: {HttpHeaders.authorizationHeader: "bearer $token"});
       if (response.statusCode == 400) {
