@@ -118,10 +118,10 @@ class Controller extends GetxController {
       headers: {'Accept': 'application/json'},
     ).then((resp) {
       final response = jsonDecode(resp.body);
-      //print(response);
+      print(response);
       if (resp.statusCode == 200) {
         Get.back();
-        //print("Sukses");
+        print("Sukses");
         bool isLogin = true;
         String userName = username;
         String token = response['data']['token'];

@@ -70,7 +70,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
     vUsername = pref.getString('userName');
     var response = await http.post(ip + '/btnreceivejob', body: {
       'sched_id': vSchedId,
-      'line': vLine,
+      'line': vLine.toString(),
       'si_id': vSIID,
       'username': vUsername,
     });
@@ -222,7 +222,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                   Row(
                     children: [
                       Text(
-                          "------------------------------------------------------------------"),
+                          "--------------------------------------------------"),
                     ],
                   ),
                   Row(
@@ -255,7 +255,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                   Row(
                     children: [
                       Text(
-                          "------------------------------------------------------------------"),
+                          "--------------------------------------------------"),
                     ],
                   ),
                   Row(
@@ -288,7 +288,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                   Row(
                     children: [
                       Text(
-                          "------------------------------------------------------------------"),
+                          "--------------------------------------------------"),
                     ],
                   ),
                   Row(
