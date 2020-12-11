@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mts/constant.dart';
 import 'package:mts/list_order.dart';
 import 'package:mts/loginscreen.dart';
@@ -42,11 +43,12 @@ class _MainDrawerState extends State<MainDrawer> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setBool('isLogin', false);
     pref.setString('userName', '');
-    Navigator.of(context).push(
-      new MaterialPageRoute(
-        builder: (BuildContext context) => new LoginScreen(),
-      ),
-    );
+    Get.offAll(LoginScreen());
+    // Navigator.of(context).push(
+    //   new MaterialPageRoute(
+    //     builder: (BuildContext context) => new LoginScreen(),
+    //   ),
+    // );
   }
 
   Future _cekUser() async {
@@ -66,12 +68,13 @@ class _MainDrawerState extends State<MainDrawer> {
         pref.setBool('isLogin', false);
         pref.setString('userName', '');
         pref.setString('token', '');
+        Get.offAll(LoginScreen());
         _alertDialog('Token Expired, Silahkan Login Ulang');
-        Navigator.of(context).push(
-          new MaterialPageRoute(
-            builder: (BuildContext context) => new LoginScreen(),
-          ),
-        );
+        // Navigator.of(context).push(
+        //   new MaterialPageRoute(
+        //     builder: (BuildContext context) => new LoginScreen(),
+        //   ),
+        // );
       }
     }
   }
@@ -80,11 +83,11 @@ class _MainDrawerState extends State<MainDrawer> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     if (pref.getBool('isLogin').toString() == "false" ||
         pref.getBool('isLogin').toString() == "null") {
-      Navigator.of(context).push(
-        new MaterialPageRoute(
-          builder: (BuildContext context) => new LoginScreen(),
-        ),
-      );
+      Get.offAll(LoginScreen());
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(builder: (context) => LoginScreen()),
+      //     (Route<dynamic> route) => false);
+      // Get.off(LoginScreen());
     }
   }
 
