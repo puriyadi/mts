@@ -64,17 +64,17 @@ class Controller extends GetxController {
     SharedPreferences pref = await SharedPreferences.getInstance();
     if (pref.getBool('isLogin').toString() == "false" ||
         pref.getBool('isLogin').toString() == "null") {
-      //print("state : Login");
-      loginStatus = LoginStatus.signIn;
-    } else {
-      //print("state : notLogin");
+      print("state : Login");
       loginStatus = LoginStatus.notSignIn;
+    } else {
+      loginStatus = LoginStatus.signIn;
+      print("state : notLogin");
     }
     //print(loginStatus);
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     switch (loginStatus) {
       case LoginStatus.notSignIn:
-        return Get.off(LoginScreen());
+        return Get.offAll(LoginScreen());
         break;
       case LoginStatus.signIn:
         return Get.off(HomeScreen());
@@ -121,7 +121,7 @@ class Controller extends GetxController {
       print(response);
       if (resp.statusCode == 200) {
         Get.back();
-        print("Sukses");
+        //print("Sukses");
         bool isLogin = true;
         String userName = username;
         String token = response['data']['token'];
