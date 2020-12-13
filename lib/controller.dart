@@ -55,7 +55,7 @@ class Controller extends GetxController {
 
   splash() {
     SystemChrome.setEnabledSystemUIOverlays([]);
-    return Timer(Duration(seconds: 2), () {
+    return Timer(Duration(seconds: 7), () {
       cekLogin();
     });
   }
