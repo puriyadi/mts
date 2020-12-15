@@ -64,11 +64,11 @@ class Controller extends GetxController {
     SharedPreferences pref = await SharedPreferences.getInstance();
     if (pref.getBool('isLogin').toString() == "false" ||
         pref.getBool('isLogin').toString() == "null") {
-      print("state : Login");
+      print("state : notLogin");
       loginStatus = LoginStatus.notSignIn;
     } else {
       loginStatus = LoginStatus.signIn;
-      print("state : notLogin");
+      print("state : Login");
     }
     //print(loginStatus);
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
