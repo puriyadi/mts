@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mts/loginscreen.dart';
-import 'package:mts/main_drawer.dart';
+// import 'package:mts/main_drawer.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:convert';
@@ -154,13 +154,20 @@ class _PayrollScreenState extends State<ListOrder> {
     return SafeArea(
       child: Container(
         child: Scaffold(
-          drawer: MainDrawer(),
+          // drawer: MainDrawer(),
           appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            backgroundColor: Colors.blue,
+            elevation: 0,
             centerTitle: true,
             title: Text(
               "List Order",
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             // leading: new IconButton(
             //   icon: new Icon(Icons.arrow_back, color: Colors.black),

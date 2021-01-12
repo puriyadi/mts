@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mts/constant.dart';
-import 'package:mts/main_drawer.dart';
+// import 'package:mts/main_drawer.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ReceiveOrder extends StatefulWidget {
   static const routeName = '/receive_order';
@@ -11,14 +13,84 @@ class ReceiveOrder extends StatefulWidget {
   _ReceiveOrderState createState() => _ReceiveOrderState();
 }
 
+final warn = "assets/images/warning.png";
+final error = "assets/images/icon_error.png";
+final success = "assets/images/icon_success.png";
+
 class _ReceiveOrderState extends State<ReceiveOrder> {
+  _notif1(String dekripsi, String gambar) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            //backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0)), //this right here
+            child: Container(
+              height: 265,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      gambar,
+                      width: 140,
+                      height: 140,
+                    ),
+                    Text(
+                      dekripsi,
+                      textAlign: TextAlign.center,
+                      style: new TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 18.0),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          width: 100.0,
+                          child: RaisedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              "OK",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            color: const Color(0xFF1BC0C5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
   List users = [];
-  bool isLoading = false;
+  bool isLoading = true;
+  Position _currentPosition;
+  int data;
 
   @override
   void initState() {
     super.initState();
-    this.fetchUser();
+    // _notif1("welcome", success);
+    _getCurrentLocation().then((value) {
+      this.fetchUser().then((value) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    });
   }
   /*
   fetchUser() async {
@@ -46,7 +118,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
   }
   */
 
-  void fetchUser() async {
+  fetchUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     final String vUsername = pref.getString('userName');
 
@@ -64,8 +136,21 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
     }
   }
 
-  void _btnreceivejob (String vSchedId, int vLine, String vSIID) async {
+  _getCurrentLocation() async {
+    Position position = await Geolocator().getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
+    setState(() {
+      _currentPosition = position;
+    });
+    print(_currentPosition);
+    return _currentPosition;
+  }
+
+  void _btnreceivejob(String vSchedId, int vLine, String vSIID) async {
     String vUsername = '';
+    setState(() {
+      isLoading = true;
+    });
     SharedPreferences pref = await SharedPreferences.getInstance();
     vUsername = pref.getString('userName');
     var response = await http.post(ip + '/btnreceivejob', body: {
@@ -73,14 +158,49 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
       'line': vLine.toString(),
       'si_id': vSIID,
       'username': vUsername,
+      "latitude": _currentPosition.latitude.toString(),
+      "longitude": _currentPosition.longitude.toString(),
     });
 
     if (response.statusCode == 200) {
       var items = jsonDecode(response.body);
       print(items);
-    }  
+      _notif1("Order berhasil diterima", success);
+    }
+    this.fetchUser().then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
+  void _btnrefusejob(String vSchedId, int vLine, String vSIID) async {
+    String vUsername = '';
+    setState(() {
+      isLoading = true;
+    });
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    vUsername = pref.getString('userName');
+    var response = await http.post(ip + '/btnrefusejob', body: {
+      'sched_id': vSchedId,
+      'line': vLine.toString(),
+      'si_id': vSIID,
+      'username': vUsername,
+      // "latitude": _currentPosition.latitude.toString(),
+      // "longitude": _currentPosition.longitude.toString(),
+    });
+
+    if (response.statusCode == 200) {
+      var items = jsonDecode(response.body);
+      print(items);
+      _notif1("Order berhasil ditolak", error);
+    }
+    this.fetchUser().then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
   /*
   Future fetchUser() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -108,21 +228,55 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Receive Order'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        title: Text(
+          'Receive Order',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
-      drawer: MainDrawer(),
-      body: getBody(),
+      // drawer: MainDrawer(),
+      body: Stack(children: [
+        isLoading
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AlertDialog(
+                    content: Container(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: CupertinoActivityIndicator()),
+                    insetPadding: EdgeInsets.zero,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                  ),
+                ],
+              )
+            : getBody(),
+      ]),
     );
   }
 
   Widget getBody() {
     //List items = ["1","2"];
 
-    return ListView.builder(
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          return getCard(users[index]);
-        });
+    return users.length > 0
+        ? ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              return getCard(users[index]);
+            })
+        : Center(
+            child: Text("No Data Available..."),
+          );
   }
 
   Widget getCard(index) {
@@ -160,7 +314,7 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
         child: Column(
           children: <Widget>[
             ListTile(
-              title: Text('Schedule : ' + vSchedid ),
+              title: Text('Schedule : ' + vSchedid),
               subtitle: Text('SI No. ' + vSIID + ' - ' + vBussUnit),
             ),
             Padding(
@@ -325,26 +479,68 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
                       ),
                     ],
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ButtonTheme(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40)),
                         minWidth: 20,
+                        height: 40,
                         child: RaisedButton(
                           onPressed: () {
                             this._btnreceivejob(vSchedid, vLine, vSIID);
                           },
-                          child: Text('TERIMA ORDER'),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                'TERIMA',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(width: 5),
+                      SizedBox(width: 10),
                       ButtonTheme(
-                        minWidth: 20,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(40)),
+                        minWidth: 30,
+                        height: 40,
                         child: RaisedButton(
                           color: Colors.red,
                           onPressed: () {
-                            
+                            this._btnrefusejob(vSchedid, vLine, vSIID);
                           },
-                          child: Text('TOLAK ORDER'),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 3,
+                              ),
+                              Text(
+                                'TOLAK',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -357,6 +553,4 @@ class _ReceiveOrderState extends State<ReceiveOrder> {
       ),
     );
   }
-
- 
 }

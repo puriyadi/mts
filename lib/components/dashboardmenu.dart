@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_keicbt/screen/ujianscreen.dart';
 import 'package:get/get.dart';
 import 'package:mts/list_order.dart';
+import 'package:mts/progress.dart';
 import 'package:mts/receive_order.dart';
 
 class DashboardMenu extends StatelessWidget {
@@ -27,6 +28,11 @@ class DashboardMenu extends StatelessWidget {
               onTap: () => Get.to(ListOrder()),
               child: DashboardMenuItem(
                   constraints, "List Order", "assets/images/listorderr.png"),
+            ),
+            GestureDetector(
+              onTap: () => Get.to(OnDelivery()),
+              child: DashboardMenuItem(
+                  constraints, "On Delivery", "assets/images/delivery.png"),
             ),
             // RaisedButton(
             //   onPressed: () {

@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
-
+import 'dart:io' as Io;
 import 'package:mts/home_screen.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'controller.dart';
 
 //void main() => runApp(MyApp());
+cekpermit() async {
+  Map<Permission, PermissionStatus> status =
+      await [Permission.location, Permission.phone].request();
+  if (status[Permission.location] == PermissionStatus.denied ||
+      status[Permission.phone] == PermissionStatus.denied) {
+    Io.exit(0);
+  }
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,6 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    cekpermit();
     _cekLogin();
   }
 
