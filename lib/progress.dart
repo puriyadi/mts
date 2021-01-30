@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:mts/receive_order.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:geolocator/geolocator.dart';
@@ -28,32 +29,31 @@ String vSchedId = "";
 String stat = "";
 String nexstat = "";
 String nexket = "";
+String keterangan = "";
 int path = 0;
 var items;
 Position _currentPosition;
 bool isLoading = false;
 
 class _OnDeliveryScreenState extends State<OnDelivery> {
-  _notif1(String dekripsi, String gambar) {
+  _notif1(String dekripsi, String gambar, String keluar) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return Dialog(
-            //backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)), //this right here
+                borderRadius: BorderRadius.circular(30.0)),
             child: Container(
-              height: 265,
+              height: 290,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Image.asset(
                       gambar,
-                      width: 140,
-                      height: 140,
+                      width: 120,
+                      height: 120,
                     ),
                     Text(
                       dekripsi,
@@ -66,19 +66,23 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      // crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         SizedBox(
                           width: 100.0,
                           child: RaisedButton(
                             onPressed: () {
-                              Navigator.pop(context);
+                              keluar == "keluar"
+                                  ? Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => ReceiveOrder()),
+                                      (Route<dynamic> route) => false)
+                                  : Navigator.pop(context);
                             },
                             child: Text(
                               "OK",
                               style: TextStyle(color: Colors.white),
                             ),
-                            color: const Color(0xFF1BC0C5),
+                            color: Colors.green,
                           ),
                         ),
                       ],
@@ -89,6 +93,9 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
             ),
           );
         });
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -96,12 +103,13 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
     super.initState();
     //_getCurrentLocation().then((value) {
     //_getCurrentLocation();
+    items = null;
     getData();
     //});
-    isLoading = true;
   }
 
   getData() async {
+    isLoading = true;
     var response = await http.get(ip + '/jobprogress?drv_id=' + drvId);
     if (response.statusCode == 200) {
       // print(response.body.length);
@@ -116,51 +124,63 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
           if (stat == "RJ") {
             nexstat = "OG";
             nexket = "OutGarasi";
+            keterangan = "Keluar Garasi";
             path = 1;
           } else if (stat == "OG") {
             nexstat = "AD";
             nexket = "ArriveDepo";
+            keterangan = "Sampai Depo";
             path = 2;
           } else if (stat == "AD") {
             nexstat = "OD";
             nexket = "OutDepo";
+            keterangan = "Keluar Depo";
             path = 3;
           } else if (stat == "OD") {
             nexstat = "AP";
             nexket = "ArrivePickup";
+            keterangan = "Sampai Tempat Pengambilan";
             path = 4;
           } else if (stat == "AP") {
             nexstat = "LP";
             nexket = "LoadPickup";
+            keterangan = "Memuat Barang";
             path = 5;
           } else if (stat == "LP") {
             nexstat = "OP";
             nexket = "OutPickup";
+            keterangan = "Keluar Tempat Pengambilan";
             path = 6;
           } else if (stat == "OP") {
             nexstat = "AU";
             nexket = "ArriveUnload";
+            keterangan = "Sampai Tempat Bongkar";
             path = 7;
           } else if (stat == "AU") {
             nexstat = "UL";
             nexket = "Unload";
+            keterangan = "Bongkar Barang";
             path = 8;
           } else if (stat == "UL") {
             nexstat = "OU";
             nexket = "OutUnload";
+            keterangan = "Keluar Tempat Bongkar";
             path = 9;
           } else if (stat == "OU") {
             nexstat = "CL";
             nexket = "Close";
+            keterangan = "Selesai";
             path = 10;
           }
         });
       } else {
         items = null;
       }
-      //print(items);
+      // print(items);
     }
-    isLoading = false;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   _getCurrentLocation() async {
@@ -190,9 +210,12 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
       "fieldtable": ket,
     });
     if (response.statusCode == 200) {
-      _notif1("Data Tersimpan", success);
+      if (status != "CL")
+        _notif1("Data Tersimpan", success, "tidak");
+      else
+        _notif1("Pekerjaan Selesai", success, "keluar");
     } else {
-      _notif1("Terjadi kesalahan, Hubungi Administrator", error);
+      _notif1("Terjadi kesalahan, Hubungi Administrator", error, "tidak");
     }
   }
 
@@ -628,7 +651,7 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 40.0),
                                     child: Text(
-                                      nexket,
+                                      keterangan,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -884,7 +907,7 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
                                               Container(
                                                 width: 110,
                                                 child: Text(
-                                                  "Contact Person",
+                                                  "Dest Contact",
                                                   style:
                                                       TextStyle(fontSize: 12),
                                                 ),
@@ -996,22 +1019,24 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
                     )
                   : Container(child: Center(child: Text("Data Not Available"))),
               isLoading
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AlertDialog(
-                          content: Container(
-                              padding: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: CupertinoActivityIndicator()),
-                          insetPadding: EdgeInsets.zero,
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                        ),
-                      ],
+                  ? Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AlertDialog(
+                            content: Container(
+                                padding: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: CupertinoActivityIndicator()),
+                            insetPadding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                          ),
+                        ],
+                      ),
                     )
                   : Container()
             ],
