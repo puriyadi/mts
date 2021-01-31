@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'constant.dart';
-import 'controller.dart';
+// import 'controller.dart';
 
 class OnDelivery extends StatefulWidget {
   OnDelivery({Key key}) : super(key: key);
@@ -109,8 +109,11 @@ class _OnDeliveryScreenState extends State<OnDelivery> {
   }
 
   getData() async {
+    String driverid = '';
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    driverid = pref.getString('drvid');
     isLoading = true;
-    var response = await http.get(ip + '/jobprogress?drv_id=' + drvId);
+    var response = await http.get(ip + '/jobprogress?drv_id=' + driverid);
     if (response.statusCode == 200) {
       // print(response.body.length);
       // print(response.body);

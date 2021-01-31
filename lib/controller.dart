@@ -120,14 +120,50 @@ class Controller extends GetxController {
       final response = jsonDecode(resp.body);
       print(response);
       if (resp.statusCode == 200) {
-        Get.back();
-        //print("Sukses");
-        bool isLogin = true;
-        String userName = username;
-        String token = response['data']['token'];
-        drvId = response['user'][0]['drv_id'];
-        savePrefs(isLogin, userName, token);
-        Get.off(HomeScreen());
+        if (response['role'][0]['role'] == "Driver") {
+          Get.back();
+          //print("Sukses");
+          bool isLogin = true;
+          String userName = username;
+          String token = response['data']['token'];
+          drvId = response['user'][0]['drv_id'];
+          savePrefs(isLogin, userName, token, drvId);
+          Get.off(HomeScreen());
+        } else {
+          Get.back();
+          Get.dialog(
+            AlertDialog(
+              titlePadding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              contentPadding: EdgeInsets.all(0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                    child: Center(
+                      child: Text(
+                        "Role Must be Driver",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: Colors.black.withOpacity(.1)),
+                  FlatButton(
+                    highlightColor: Colors.transparent,
+                    child: Text("Try Again"),
+                    onPressed: () => Get.back(),
+                  )
+                ],
+              ),
+            ),
+          );
+        }
       } else {
         Get.back();
         Get.dialog(
@@ -166,10 +202,11 @@ class Controller extends GetxController {
     });
   }
 
-  savePrefs(bool isLogin, String userName, String token) async {
+  savePrefs(bool isLogin, String userName, String token, String drvId) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setBool('isLogin', isLogin);
     pref.setString('userName', username);
     pref.setString('token', token);
+    pref.setString('drvid', drvId);
   }
 }

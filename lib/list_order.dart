@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mts/loginscreen.dart';
 // import 'package:mts/main_drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:ui' as ui;
 import 'home_screen.dart';
 import 'package:mts/constant.dart';
-import 'controller.dart';
+// import 'controller.dart';
 
 class ListOrder extends StatefulWidget {
   ListOrder({Key key}) : super(key: key);
@@ -117,8 +118,11 @@ class _PayrollScreenState extends State<ListOrder> {
     });
     try {
       var datahistory;
+      String driverid = '';
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      driverid = pref.getString('drvid');
       var url =
-          ip + "/listorder?drv_id=" + drvId + "&index=" + index.toString();
+          ip + "/listorder?drv_id=" + driverid + "&index=" + index.toString();
       final response = await http.get(url,
           headers: {HttpHeaders.authorizationHeader: "bearer $token"});
       if (response.statusCode == 400) {
